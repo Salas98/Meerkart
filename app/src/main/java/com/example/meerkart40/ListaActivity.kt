@@ -7,6 +7,7 @@ import android.nfc.NfcAdapter
 import android.nfc.Tag
 import android.os.Bundle
 import android.util.Log
+import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -67,6 +68,8 @@ class ListaActivity : AppCompatActivity() {
         super.onNewIntent(intent)
         Log.d("ListaActivity", "Nuevo Intent NFC recibido: ${intent.action}")
         setIntent(intent)
+        initRecyclerView()
+        UpdateTotal()
         handleNFCIntent(intent)
 
     }
@@ -119,15 +122,25 @@ class ListaActivity : AppCompatActivity() {
                     nomProd = ObtenerProducto(ref)
                     precio = ObtenerPrecio(ref)
 
-
-                    Log.d("Detecto", "referencia: " + ref)
-                    Log.d("Detecto","nom producte: "+ nomProd)
-                    Log.d("Detecto", "PREU: " +precio)
-
                     Log.d("ProductProvider", "Producto newProduct")
 
-                    newProduct = Productos(nomProd, 1, precio.toDouble())
-                    ProductProvider.addProduct(newProduct)
+
+
+                    val existingProduct = ProductProvider.productList.find { it.ref == ref.toInt() }
+                    var i=0
+
+                    if (existingProduct != null) {
+                        // Producto existente: actualizar cantidad y precio
+                        existingProduct.cantidad++
+                        existingProduct.precio += precio.toDouble() // Actualizar precio si es necesario.
+                    } else {
+                        newProduct = Productos(ref.toInt(), nomProd, 1, precio.toDouble())
+                        ProductProvider.addProduct(newProduct)
+                    }
+                    UpdateTotal()
+
+
+
 
 
 
@@ -185,6 +198,14 @@ class ListaActivity : AppCompatActivity() {
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerProductos)
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = ProductAdapter(ProductProvider.productList)
+
+
+    }
+
+    private fun UpdateTotal(){
+        val subtotal = ProductProvider.productList.sumOf { it.precio * it.cantidad }
+        val subtotalTextView: TextView = findViewById(R.id.subtotalBox)
+        subtotalTextView.text = String.format("Total: \n%.2f €", subtotal)
     }
 
 }

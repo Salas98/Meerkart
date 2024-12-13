@@ -123,7 +123,7 @@
             android:gravity="center"
             android:textColor="#000000"
             android:textSize="18sp"
-            android:text="Total:\n11,35 €"
+            android:text="Total:\n0.00 €"
             app:layout_constraintStart_toEndOf="@id/botonPago"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"

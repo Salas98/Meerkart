@@ -3,7 +3,8 @@ package com.example.meerkart40
 import androidx.recyclerview.widget.RecyclerView
 
 data class Productos (
+    val ref: Int,
     val nombre:String,
-    val cantidad:Int,
-    val precio: Double
+    var cantidad:Int,
+    var precio: Double
 )
