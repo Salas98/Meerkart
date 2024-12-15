@@ -6,25 +6,15 @@ import android.nfc.NdefMessage
 import android.nfc.NfcAdapter
 import android.nfc.Tag
 import android.os.Bundle
-import android.util.Log
 import android.widget.Button
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.github.jan.supabase.postgrest.from
-import io.github.jan.supabase.postgrest.postgrest
 import io.github.jan.supabase.postgrest.query.Columns
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import kotlinx.datetime.LocalTime
-import io.github.jan.supabase.postgrest.query.Order
-
 
 class ListaActivity : AppCompatActivity() {
 
@@ -252,7 +242,7 @@ class ListaActivity : AppCompatActivity() {
                 runBlocking {
                     try {
                         compra(email)
-                    } catch (e: Exception){ Log.d("compra", e.message.toString())}
+                    } catch (e: Exception){}
                 }
                 ProductProvider.vaciar()
                 initRecyclerView()
@@ -275,7 +265,6 @@ class ListaActivity : AppCompatActivity() {
 
         for (producto in ProductProvider.productList){
             val cantidad = MainActivity.cantidad(idCompra = idCompra, referencia = producto.ref, cantidad = producto.cantidad)
-            Log.d("compra3", cantidad.toString())
             supabase.from("CANTIDAD"). insert(cantidad)
         }
 

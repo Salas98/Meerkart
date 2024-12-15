@@ -1,6 +1,6 @@
 package com.example.meerkart40
 
-import androidx.recyclerview.widget.RecyclerView
+
 
 data class Productos (
     val ref: Int,

@@ -1,33 +1,23 @@
 package com.example.meerkart40
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.provider.MediaStore.Audio.Radio
-import android.text.Editable
-import android.text.TextWatcher
-import android.util.Log
 import android.util.Patterns
+import android.view.View
 import android.widget.Button
 import android.widget.EditText
-import android.widget.RadioButton
+import android.widget.ImageView
 import android.widget.RadioGroup
-import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.cardview.widget.CardView
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.isVisible
 import io.github.jan.supabase.auth.auth
-import io.github.jan.supabase.auth.providers.Google
 import io.github.jan.supabase.auth.providers.builtin.Email
 import io.github.jan.supabase.postgrest.from
-import io.github.jan.supabase.postgrest.query.Columns
-import io.github.jan.supabase.postgrest.query.Count
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import org.w3c.dom.Text
 
 class RegisterActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,6 +32,8 @@ class RegisterActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
+        condiciones()
     }
 
     fun send_data_register() {
@@ -125,7 +117,6 @@ class RegisterActivity : AppCompatActivity() {
                             "Usuario ya registrado",
                             1000
                         )
-                        Log.d("problema", e.message.toString())
                     }
                 } else if (pago1 == pago2){
                     MainActivity.alerta(
@@ -182,7 +173,6 @@ class RegisterActivity : AppCompatActivity() {
                 paypal -> { pago = "PayPal" }
             }
         }
-        Log.d("pago", pago)
         return pago
     }
 
@@ -196,6 +186,19 @@ class RegisterActivity : AppCompatActivity() {
         val LongitudMinima = contraseña.length >= minLon
 
         return mayus && minus && numeros && CharEspecial && LongitudMinima
+    }
+
+    fun condiciones(){
+        val condiciones: CardView = findViewById(R.id.condiciones)
+        val info: ImageView = findViewById(R.id.info)
+        info.setOnClickListener{
+            if (condiciones.isVisible){
+                condiciones.visibility = View.GONE
+            } else{
+                condiciones.visibility = View.VISIBLE
+            }
+        }
+
     }
 
 }

@@ -17,12 +17,11 @@ class ticket(private val Email: String,
              private val compra: String
 ) : AsyncTask<Void, Void, Void>()  {
 
-    private val username = "labxat.2024@gmail.com"  // Tu correo de Gmail
-    private val password = "qkhv qoha biwo zppx"  // Tu contraseña de aplicación de Gmail
+    private val username = "labxat.2024@gmail.com"
+    private val password = "qkhv qoha biwo zppx"
 
     override fun doInBackground(vararg params: Void?): Void? {
         try {
-            // Configuración de propiedades para SMTP de Gmail
             val properties = Properties().apply {
                 put("mail.smtp.auth", "true")
                 put("mail.smtp.starttls.enable", "true")
@@ -30,14 +29,12 @@ class ticket(private val Email: String,
                 put("mail.smtp.port", "587")
             }
 
-            // Autenticación con el servidor SMTP usando la contraseña de aplicación
             val session = Session.getInstance(properties, object : javax.mail.Authenticator() {
                 override fun getPasswordAuthentication(): PasswordAuthentication {
                     return PasswordAuthentication(username, password)
                 }
             })
 
-            // Crear el mensaje de correo
             val message = MimeMessage(session).apply {
                 setFrom(InternetAddress(username))
                 setRecipients(Message.RecipientType.TO, InternetAddress.parse(Email))
@@ -45,11 +42,8 @@ class ticket(private val Email: String,
                 setText(compra)
             }
 
-            // Enviar el correo
             Transport.send(message)
-            Log.d("EmailSender", "Correo enviado exitosamente")
         } catch (e: Exception) {
-            Log.e("EmailSender", "Error al enviar el correo: ${e.message}")
         }
         return null
     }

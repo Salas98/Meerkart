@@ -1,21 +1,14 @@
 package com.example.meerkart40
 
 import android.app.Activity
-import android.content.DialogInterface
 import android.content.Intent
-import android.icu.util.Calendar
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.os.WorkDuration
-import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContract
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -25,13 +18,9 @@ import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.auth.providers.builtin.Email
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
-import kotlinx.datetime.LocalDateTime
 import kotlinx.serialization.Serializable
-import java.sql.Time
-import java.util.Date
-import java.time.LocalTime
+
 
 val supabase = createSupabaseClient(
     supabaseUrl = "https://zdgpnziviiipmsyvupoh.supabase.co",

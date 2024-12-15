@@ -1,7 +1,5 @@
 package com.example.meerkart40
 
-import android.util.Log
-import androidx.recyclerview.widget.RecyclerView
 
 object ProductProvider {
     // Lista de productos
