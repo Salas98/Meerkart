@@ -34,7 +34,17 @@ android {
     kotlinOptions {
         jvmTarget = "11"
     }
+    packaging {
+        resources {
+            excludes.add("META-INF/NOTICE.md")  // Excluir archivos de recursos duplicados
+            excludes.add("META-INF/LICENSE.md")    // Excluir otros archivos de recursos duplicados
+        }
+    }
+
 }
+
+
+
 
 dependencies {
 
@@ -43,6 +53,8 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.media3.common.ktx)
+    implementation(libs.transport.api)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -54,4 +66,12 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.7.3")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
     implementation ("com.google.android.material:material:1.9.0")
+    implementation("com.sun.mail:android-mail:1.6.6") {
+        exclude(group = "com.sun.mail", module = "android-mail")
+    }
+    implementation("com.sun.mail:android-activation:1.6.6") {
+        exclude(group = "com.sun.mail", module = "android-activation")
+    }
+
+
 }

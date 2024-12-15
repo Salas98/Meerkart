@@ -10,7 +10,10 @@ object ProductProvider {
     // Metodo para agregar un producto
     fun addProduct(product: Productos) {
         productList.add(product)
-        Log.d("ProductProvider", "Lista de productos $productList")
+    }
+
+    fun vaciar(){
+        productList.clear()
     }
 
 }

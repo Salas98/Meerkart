@@ -43,7 +43,8 @@ class RegisterActivity : AppCompatActivity() {
             insets
         }
     }
-    fun send_data_register(){
+
+    fun send_data_register() {
         var nombre_registre: EditText = findViewById(R.id.register_name)
         var apellido_registre: EditText = findViewById(R.id.register_surname)
         var email_registre: EditText = findViewById(R.id.register_email)
@@ -54,22 +55,38 @@ class RegisterActivity : AppCompatActivity() {
         var pago1: String = ""
         pago_principal.setOnCheckedChangeListener { group, checkedId ->
             when (checkedId) {
-                R.id.g_pay_principal-> { pago1 = "Google Pay" }
-                R.id.apple_pay_principal -> { pago1 = "Apple Pay" }
-                R.id.ppal_principal -> { pago1 = "PayPal" }
+                R.id.g_pay_principal -> {
+                    pago1 = "Google Pay"
+                }
+
+                R.id.apple_pay_principal -> {
+                    pago1 = "Apple Pay"
+                }
+
+                R.id.ppal_principal -> {
+                    pago1 = "PayPal"
+                }
             }
         }
 
         var pago2: String = ""
         pago_secundario.setOnCheckedChangeListener { group, checkedId ->
             when (checkedId) {
-                R.id.g_pay_secundario-> { pago1 = "Google Pay" }
-                R.id.apple_pay_secundario -> { pago1 = "Apple Pay" }
-                R.id.ppal_secundario-> { pago1 = "PayPal" }
+                R.id.g_pay_secundario -> {
+                    pago1 = "Google Pay"
+                }
+
+                R.id.apple_pay_secundario -> {
+                    pago1 = "Apple Pay"
+                }
+
+                R.id.ppal_secundario -> {
+                    pago1 = "PayPal"
+                }
             }
         }
 
-        val botoSendRegister: Button =findViewById<Button>(R.id.register_send_button)
+        val botoSendRegister: Button = findViewById<Button>(R.id.register_send_button)
         botoSendRegister.setOnClickListener {
             var nombre = nombre_registre.text.toString()
             var apellido = apellido_registre.text.toString()
@@ -77,76 +94,74 @@ class RegisterActivity : AppCompatActivity() {
             var contra = contra_registre.text.toString()
             var contrarepe = contra_repe_registre.text.toString()
             runBlocking {
-                if (correo != "" && nombre != "" && apellido != "") {
-                    if (contra == contrarepe) {
-                        if (emailValid(correo)) {
-                            if (validarContra(contra)) {
-                                if (pago1 != pago2) {
-                                    try {
-                                        val nuevoCliente = MainActivity.cliente(
-                                            email = correo,
-                                            nomCli = nombre,
-                                            apellido = apellido,
-                                            pag1 = pago1,
-                                            pag2 = pago2,
-                                        )
-                                        authNewUser(correo, contra)
-                                        supabase.from("CLIENTE").insert(nuevoCliente)
-                                        val go =
-                                            Intent(this@RegisterActivity, MainActivity::class.java)
-                                        go.putExtra("ALERT_TITLE", "Registro exitoso")
-                                        go.putExtra(
-                                            "ALERT_MESSAGE",
-                                            "Usuario registrado correctamente"
-                                        )
-                                        go.putExtra("SHOW_ALERT", true)
-                                        setResult(RESULT_OK, go)
-                                        startActivity(go)
-                                    } catch (e: Exception) {
-                                        MainActivity.alerta(
-                                            this@RegisterActivity,
-                                            "Error en el correo",
-                                            "Usuario ya registrado",
-                                            1000
-                                        )
-                                    }
-                                } else {
-                                    MainActivity.alerta(
-                                        this@RegisterActivity,
-                                        "Error en el metodo de pago",
-                                        "Los dos metodos no pueden ser el mismo",
-                                        1000
-                                    )
-                                }
-                            } else {
-                                MainActivity.alerta(
-                                    this@RegisterActivity,
-                                    "Error en la contraseña",
-                                    "La contraseña no cumple con las condiciones",
-                                    1000
-                                )
-                            }
-                        } else {
-                            MainActivity.alerta(
-                                this@RegisterActivity,
-                                "Error en el correo",
-                                "El correo no cumple",
-                                1000
-                            )
-                        }
-                    } else {
+                if (correo != "" && nombre != "" && apellido != "" && contra == contrarepe && emailValid(
+                        correo
+                    ) && validarContra(contra) && pago1 != pago2
+                ) {
+                    try {
+                        val nuevoCliente = MainActivity.cliente(
+                            email = correo,
+                            nomCli = nombre,
+                            apellido = apellido,
+                            pag1 = pago1,
+                            pag2 = pago2,
+                        )
+                        authNewUser(correo, contra)
+                        supabase.from("CLIENTE").insert(nuevoCliente)
+                        val go =
+                            Intent(this@RegisterActivity, MainActivity::class.java)
+                        go.putExtra("ALERT_TITLE", "Registro exitoso")
+                        go.putExtra(
+                            "ALERT_MESSAGE",
+                            "Usuario registrado correctamente \n Verifique el correo"
+                        )
+                        go.putExtra("SHOW_ALERT", true)
+                        setResult(RESULT_OK, go)
+                        startActivity(go)
+                    } catch (e: Exception) {
                         MainActivity.alerta(
                             this@RegisterActivity,
-                            "Error en la contraseña",
-                            "La contraseña no coincide",
+                            "Error en el correo",
+                            "Usuario ya registrado",
                             1000
                         )
+                        Log.d("problema", e.message.toString())
                     }
+                } else if (pago1 == pago2){
+                    MainActivity.alerta(
+                        this@RegisterActivity,
+                        "Error en el metodo de pago",
+                        "Los dos metodos no pueden ser el mismo",
+                        1000
+                    )
+                } else if (!validarContra(contra)) {
+                    MainActivity.alerta(
+                        this@RegisterActivity,
+                        "Error en la contraseña",
+                        "La contraseña no cumple con las condiciones",
+                        1000
+                    )
+                } else if (emailValid(correo)){
+                    MainActivity.alerta(
+                        this@RegisterActivity,
+                        "Error en el correo",
+                        "El correo no es correcto",
+                        1000
+                    )
+                } else if (contra != contrarepe) {
+                    MainActivity.alerta(
+                        this@RegisterActivity,
+                        "Error en la contraseña",
+                        "La contraseña no coincide",
+                        1000
+                    )
                 }
-
             }
         }
     }
+
+
+
     fun emailValid(email:String): Boolean{
         return Patterns.EMAIL_ADDRESS.matcher(email).matches()
     }

@@ -3,6 +3,7 @@ package com.example.meerkart40
 import android.app.Activity
 import android.content.DialogInterface
 import android.content.Intent
+import android.icu.util.Calendar
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -26,7 +27,11 @@ import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
+import kotlinx.datetime.LocalDateTime
 import kotlinx.serialization.Serializable
+import java.sql.Time
+import java.util.Date
+import java.time.LocalTime
 
 val supabase = createSupabaseClient(
     supabaseUrl = "https://zdgpnziviiipmsyvupoh.supabase.co",
@@ -38,7 +43,6 @@ val supabase = createSupabaseClient(
 
 class MainActivity : AppCompatActivity() {
 
-    private  lateinit var  registerActivityLauncher: ActivityResultLauncher<Intent>
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -66,7 +70,7 @@ class MainActivity : AppCompatActivity() {
         val mensaje = intent.getStringExtra("ALERT_MESSAGE") ?: ""
 
         if (titulo != ""){
-            alerta(this, titulo, mensaje, 1000)
+            alerta(this, titulo, mensaje, 2000)
         }
 
         boto_login.setOnClickListener {
@@ -75,13 +79,15 @@ class MainActivity : AppCompatActivity() {
             runBlocking {
             try{
                 inicioSesion(email, contra)
-                gotoLista()
+                gotoLista(email)
 
             } catch (e: Exception){
-                Log.d("incioSesion", "Inicio de sesion no valido")
+                alerta(this@MainActivity, "Error en inicio de sesión", "Usuario o contraseña incorrectos", 1000)
             }
         }
         }
+
+
 
 
 
@@ -110,8 +116,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun gotoLista(){
+    fun gotoLista(correo: String){
             val goLista = Intent(this, ListaActivity::class.java)
+        goLista.putExtra("Usuario", correo)
             startActivity(goLista)
 
     }
@@ -154,10 +161,17 @@ class MainActivity : AppCompatActivity() {
     )
 
     @Serializable
-    data class producto(
+    data class  compra(
+        val idCompra: Int,
+        val email: String,
+        val precioCompra: Float
+    )
+
+    @Serializable
+    data class cantidad(
+        val idCompra: Int,
         val referencia: Int,
-        val nomProd: String,
-        val precio: Float
+        val cantidad: Int
     )
 
 
