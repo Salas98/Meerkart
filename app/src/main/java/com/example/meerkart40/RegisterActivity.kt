@@ -19,7 +19,8 @@ import io.github.jan.supabase.auth.providers.builtin.Email
 import io.github.jan.supabase.postgrest.from
 import kotlinx.coroutines.runBlocking
 
-class RegisterActivity : AppCompatActivity() {
+class
+RegisterActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
@@ -65,15 +66,15 @@ class RegisterActivity : AppCompatActivity() {
         pago_secundario.setOnCheckedChangeListener { group, checkedId ->
             when (checkedId) {
                 R.id.g_pay_secundario -> {
-                    pago1 = "Google Pay"
+                    pago2 = "Google Pay"
                 }
 
                 R.id.apple_pay_secundario -> {
-                    pago1 = "Apple Pay"
+                    pago2 = "Apple Pay"
                 }
 
                 R.id.ppal_secundario -> {
-                    pago1 = "PayPal"
+                    pago2 = "PayPal"
                 }
             }
         }
@@ -115,7 +116,7 @@ class RegisterActivity : AppCompatActivity() {
                             this@RegisterActivity,
                             "Error en el correo",
                             "Usuario ya registrado",
-                            1000
+                            4000
                         )
                     }
                 } else if (pago1 == pago2){
@@ -123,29 +124,30 @@ class RegisterActivity : AppCompatActivity() {
                         this@RegisterActivity,
                         "Error en el metodo de pago",
                         "Los dos metodos no pueden ser el mismo",
-                        1000
+                        4000
                     )
                 } else if (!validarContra(contra)) {
                     MainActivity.alerta(
                         this@RegisterActivity,
                         "Error en la contraseña",
                         "La contraseña no cumple con las condiciones",
-                        1000
-                    )
-                } else if (emailValid(correo)){
-                    MainActivity.alerta(
-                        this@RegisterActivity,
-                        "Error en el correo",
-                        "El correo no es correcto",
-                        1000
+                        4000
                     )
                 } else if (contra != contrarepe) {
                     MainActivity.alerta(
                         this@RegisterActivity,
                         "Error en la contraseña",
                         "La contraseña no coincide",
-                        1000
+                        4000
                     )
+                } else if (emailValid(correo)){
+                    MainActivity.alerta(
+                        this@RegisterActivity,
+                        "Error en el correo",
+                        "El correo no es correcto",
+                        4000
+                    )
+
                 }
             }
         }
@@ -164,17 +166,6 @@ class RegisterActivity : AppCompatActivity() {
         }
     }
 
-    fun metodoPago(boto: RadioGroup, g_pay: Int, apple_pay: Int, paypal: Int): String {
-        var pago: String = ""
-        boto.setOnCheckedChangeListener { group, checkedId ->
-            when (checkedId) {
-                g_pay -> { pago = "Google Pay" }
-                apple_pay -> { pago = "Apple Pay" }
-                paypal -> { pago = "PayPal" }
-            }
-        }
-        return pago
-    }
 
 
     fun validarContra(contraseña: String): Boolean{

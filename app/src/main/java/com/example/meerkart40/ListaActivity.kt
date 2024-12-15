@@ -1,5 +1,6 @@
 package com.example.meerkart40
 
+import android.app.AlertDialog
 import android.app.PendingIntent
 import android.content.Intent
 import android.nfc.NdefMessage
@@ -12,6 +13,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.postgrest.query.Columns
 import kotlinx.coroutines.runBlocking
@@ -66,7 +68,6 @@ class ListaActivity : AppCompatActivity() {
         super.onNewIntent(intent)
         setIntent(intent)
         initRecyclerView()
-        UpdateTotal()
         handleNFCIntent(intent)
 
     }
@@ -183,6 +184,7 @@ class ListaActivity : AppCompatActivity() {
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerProductos)
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = ProductAdapter(ProductProvider.productList)
+        UpdateTotal()
     }
 
     private fun UpdateTotal(){
@@ -212,43 +214,58 @@ class ListaActivity : AppCompatActivity() {
         val sendEmailButton = findViewById<Button>(R.id.botonPago)
         sendEmailButton.setOnClickListener {
             if (ProductProvider.productList.size > 0) {
-                val maxLength = ProductProvider.productList.maxOf { it.nombre.length }
-                val compra = StringBuilder()
+                val builder: AlertDialog.Builder=AlertDialog.Builder(this@ListaActivity)
+                  builder.setTitle("")
+                    .setMessage("¿Seguro que quieres finalizar la compra?")
+                    .setPositiveButton("Aceptar") { dialog, _ ->
+                        // Bloque que se ejecuta al hacer clic en "Aceptar"
+                        val maxLength = ProductProvider.productList.maxOf { it.nombre.length }
+                        val compra = StringBuilder()
 
-
-                compra.append(
-                    "%-${maxLength}s | %8s | %7s|\n".format(
-                        "Nombre",
-                        "Cantidad",
-                        "Precio"
-                    )
-                )
-                compra.append("-".repeat(maxLength) + "-|----------|--------|\n")
-                for (producto in ProductProvider.productList) {
-                    val (_, nombre, cantidad, precio) = producto
-                    compra.append(
-                        "%-${maxLength}s | %8d | %7.2f\n".format(
-                            nombre,
-                            cantidad,
-                            precio
+                        compra.append(
+                            "%-${maxLength}s | %8s | %7s|\n".format(
+                                "Nombre",
+                                "Cantidad",
+                                "Precio"
+                            )
                         )
-                    )
-                }
+                        compra.append("-".repeat(maxLength) + "-|----------|--------|\n")
+                        for (producto in ProductProvider.productList) {
+                            val (_, nombre, cantidad, precio) = producto
+                            compra.append(
+                                "%-${maxLength}s | %8d | %7.2f\n".format(
+                                    nombre,
+                                    cantidad,
+                                    precio
+                                )
+                            )
+                        }
 
-                compra.append("----------------------------------------------------------")
-                compra.append("----------------------------------------------------------")
-                compra.append("Total de la compra: "+ "${ProductProvider.productList.sumOf { it.precio }} €" )
-                ticket(email, "ticket-digital", compra.toString()).execute()
-                runBlocking {
-                    try {
-                        compra(email)
-                    } catch (e: Exception){}
-                }
-                ProductProvider.vaciar()
-                initRecyclerView()
+                        compra.append("----------------------------------------------------------")
+                        compra.append("----------------------------------------------------------")
+                        compra.append("Total de la compra: " + "${ProductProvider.productList.sumOf { it.precio }} €")
+                        ticket(email, "ticket-digital", compra.toString()).execute()
+                        runBlocking {
+                            try {
+                                compra(email)
+                                supabase.auth.signOut()
+                                val goMain= Intent(this@ListaActivity, MainActivity::class.java)
+                                startActivity(goMain)
+                            } catch (e: Exception) {
+                            }
+                        }
+                        ProductProvider.vaciar()
+                        initRecyclerView()
+                    }
+                    .setNegativeButton("Cancelar") { dialog, id ->
+                        dialog.dismiss()
+                    }
+                    .create()
+                    .show()
+
 
             }else {
-                MainActivity.alerta(this, "" ,"La cesta está vacía", 1000)}
+                MainActivity.alerta(this, "" ,"La cesta está vacía", 4000)}
 
         }
 
